@@ -18,7 +18,7 @@ function Page() {
                         latitude: position.coords.latitude,
                         longitude: position.coords.longitude
                     });
-                   
+    
                     axios.post(`${baseURL}/update-location`, {
                         bus_number: parseInt(value), 
                         latitude: position.coords.latitude,
@@ -38,7 +38,8 @@ function Page() {
         } else {
             setLocation({ latitude: null, longitude: null });
         }
-    }, [switchOn, value]);
+    }, [switchOn, value]); 
+    
 
     return (
         <div>
