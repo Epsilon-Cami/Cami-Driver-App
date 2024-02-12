@@ -4,7 +4,7 @@ import axios from 'axios';
 
 function Page() {
 
-    const baseURL = 'http://localhost:3000';
+    const baseURL = 'https://camibackend.onrender.com';
 
     const [value, setValue] = useState('1');
     const [switchOn, setSwitchOn] = useState(false);
