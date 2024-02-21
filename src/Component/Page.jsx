@@ -3,7 +3,6 @@ import { Flex, SegmentedControl, Box, Title, Indicator, Switch, Image } from '@m
 import axios from 'axios';
 
 function Page() {
-
     const baseURL = 'https://camibackend.onrender.com';
 
     const [value, setValue] = useState('1');
@@ -11,35 +10,41 @@ function Page() {
     const [location, setLocation] = useState({ latitude: null, longitude: null });
 
     useEffect(() => {
+        let intervalId;
+
         if (switchOn) {
-            navigator.geolocation.getCurrentPosition(
-                position => {
-                    setLocation({
-                        latitude: position.coords.latitude,
-                        longitude: position.coords.longitude
-                    });
-    
-                    axios.post(`${baseURL}/update-location`, {
-                        bus_number: parseInt(value), 
-                        latitude: position.coords.latitude,
-                        longitude: position.coords.longitude
-                    })
-                    .then(response => {
-                        console.log('Location updated successfully');
-                    })
-                    .catch(error => {
-                        console.error('Error updating location:', error);
-                    });
-                },
-                error => {
-                    console.error('Error getting geolocation:', error);
-                }
-            );
+            intervalId = setInterval(() => {
+                navigator.geolocation.getCurrentPosition(
+                    position => {
+                        setLocation({
+                            latitude: position.coords.latitude,
+                            longitude: position.coords.longitude
+                        });
+
+                        axios.post(`${baseURL}/update-location`, {
+                            bus_number: parseInt(value), 
+                            latitude: position.coords.latitude,
+                            longitude: position.coords.longitude
+                        })
+                        .then(response => {
+                            console.log('Location updated successfully');
+                        })
+                        .catch(error => {
+                            console.error('Error updating location:', error);
+                        });
+                    },
+                    error => {
+                        console.error('Error getting geolocation:', error);
+                    }
+                );
+            }, 1000);
         } else {
+            clearInterval(intervalId);
             setLocation({ latitude: null, longitude: null });
         }
+
+        return () => clearInterval(intervalId);
     }, [switchOn, value]); 
-    
 
     return (
         <div>
@@ -85,7 +90,7 @@ function Page() {
                     {/* Display latitude and longitude */}
                     {location.latitude !== null && location.longitude !== null && (
                         <Box mt={2}>
-                            X : {location.latitude.toFixed(6)} Y : {location.longitude.toFixed(6)}
+                            X : {location.latitude} Y : {location.longitude}
                         </Box>
                     )}
                 </Box>
